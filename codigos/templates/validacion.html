@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Validación de Certificado</h2>
+  <p><strong>Nombre:</strong> {{ instrumento.nombre }}</p>
+  <p><strong>Marca:</strong> {{ instrumento.marca }}</p>
+  <p><strong>Modelo:</strong> {{ instrumento.modelo }}</p>
+  <p><strong>Serie:</strong> {{ instrumento.serie }}</p>
+  <p><strong>Fecha Calibración:</strong> {{ instrumento.fecha_calibracion }}</p>
+  <p><strong>Estatus:</strong> {{ instrumento.estatus }}</p>
+  <p><strong>Laboratorio:</strong> {{ instrumento.laboratorio.nombre }}</p>
+{% endblock %}

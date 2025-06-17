@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{% if editar %}Editar{% else %}Crear{% endif %} Instrumento</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Guardar</button>
+</form>
+{% endblock %}

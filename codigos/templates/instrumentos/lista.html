@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Lista de Instrumentos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Instrumentos</h1>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Buscar por nombre, tag o número de serie...">
+        </div>
+        {% if request.user.rol != 'LAB' %}
+        <div class="col-md-3">
+            <select name="laboratorio" class="form-select">
+                <option value="">Todos los laboratorios</option>
+                {% for lab in laboratorios %}
+                    <option value="{{ lab.id }}" {% if request.GET.laboratorio == lab.id|stringformat:"d" %}selected{% endif %}>
+                        {{ lab.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-end flex-wrap mb-3">
+        <a href="{% url 'crear_instrumento' %}" class="btn btn-success">Nuevo Instrumento</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tag</th>
+                    <th>Número de Serie</th>
+                    <th>Laboratorio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for instrumento in instrumentos %}
+                <tr>
+                    <td>{{ instrumento.nombre }}</td>
+                    <td>{{ instrumento.tag }}</td>
+                    <td>{{ instrumento.serie }}</td>
+                    <td>
+                        {% if instrumento.laboratorio %}
+                            {{ instrumento.laboratorio.nombre }}
+                        {% else %}
+                            Sin laboratorio
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'detalle_instrumento' instrumento.id %}" class="btn btn-info btn-sm">Detalles</a>
+                        {% if request.user.rol == "ADMIN" or request.user.laboratorio == instrumento.laboratorio %}
+                            <a href="{% url 'editar_instrumento' instrumento.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        {% endif %}
+                        <a href="{% url 'qr_pdf' instrumento.id %}" class="btn btn-secondary btn-sm">QR PDF</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No se encontraron instrumentos.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
