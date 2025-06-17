@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Detalle Instrumento{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-primary mb-4">Detalle del Instrumento</h1>
+
+    <div class="mb-3">
+        <p><strong>Instrumento:</strong> {{ instrumento.nombre }}</p>
+        <p><strong>Tag:</strong> {{ instrumento.tag }}</p>
+        <p><strong>Modelo:</strong> {{ instrumento.modelo }}</p>
+        <p><strong>Serie:</strong> {{ instrumento.serie }}</p>
+        <p><strong>Fecha de calibración:</strong> {{ instrumento.fecha_calibracion }}</p>
+        <p><strong>UUID:</strong> {{ instrumento.uuid }}</p>
+        <p><strong>Magnitud:</strong> {{ instrumento.get_magnitud_display }}</p>
+    </div>
+
+    <div class="text-center my-4">
+        <h4 class="mb-3">Código QR</h4>
+        <img src="{% url 'generar_qr' instrumento.id %}" alt="Código QR" class="img-fluid mb-3" />
+        <br />
+        <a href="{% url 'qr_pdf' instrumento.id %}" class="btn btn-primary" target="_blank">
+            Descargar QR en PDF
+        </a>
+    </div>
+
+    {% if instrumento.certificado %}
+        <h4 class="mt-5">Certificado</h4>
+        <iframe src="{{ instrumento.certificado.url }}" class="w-100 border rounded" style="height: 600px;"></iframe>
+    {% else %}
+        <div class="alert alert-warning mt-4">
+            No hay documento asociado para este instrumento.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
