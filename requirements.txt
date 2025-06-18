@@ -29,4 +29,5 @@ urllib3==2.4.0
 boto3
 django-storages
 gunicorn==21.2.0
-pywin32==308; sys_platform == "win32"
+whitenoise==6.4.0
+django-cors-headers==3.18.0 
