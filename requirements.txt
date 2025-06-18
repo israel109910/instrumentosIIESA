@@ -26,3 +26,6 @@ rsa==4.9.1
 sqlparse==0.5.3
 tzdata==2025.2
 urllib3==2.4.0
+boto3
+django-storages
+gunicorn==21.2.0
