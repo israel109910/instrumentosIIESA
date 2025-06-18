@@ -30,4 +30,3 @@ boto3
 django-storages
 gunicorn==21.2.0
 whitenoise==6.4.0
-django-cors-headers==3.18.0 
