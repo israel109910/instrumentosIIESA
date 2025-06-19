@@ -106,4 +106,7 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
- 
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://instrumentosiiesa-production.up.railway.app",
+]
