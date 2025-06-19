@@ -1,12 +1,11 @@
 from django.urls import path
 from django.http import HttpResponse
-from . import views
+
 def home(request):
     return HttpResponse("✅ ¡Django está funcionando correctamente en Railway!")
 
 urlpatterns = [
-    path('', home, name='home'),  # Esto responde a "/"
-    path('', views.inicio, name='inicio'),
+    path('', home, name='home'),  # ✅ solo esta
     path('instrumentos/', views.lista_instrumentos, name='lista_instrumentos'),
     path('instrumento/nuevo/', views.crear_instrumento, name='crear_instrumento'),
     path('instrumento/<int:instrumento_id>/editar/', views.editar_instrumento, name='editar_instrumento'),
