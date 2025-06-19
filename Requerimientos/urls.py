@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('codigos.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),  # ← Esto habilita login/logout
+    path('', include('codigos.urls')),  # ← Esto enruta la raíz a codigos.urls
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 if settings.DEBUG:
