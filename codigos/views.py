@@ -10,7 +10,14 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 
+from django.urls import path
+from django.http import HttpResponse
 
+def home(request):
+    return HttpResponse("✅ ¡Django está funcionando correctamente en Railway!")
+
+urlpatterns = [
+    path('', home, name='home'),
 # ==========================
 # Validadores de roles
 # ==========================
