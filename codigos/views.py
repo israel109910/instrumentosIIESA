@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages  # ✅ Import necesario para usar messages
 from django.http import HttpResponse, FileResponse, HttpResponseForbidden
 from django.db.models import Q
 from .models import Instrumento, Laboratorio
@@ -9,7 +10,6 @@ import qrcode
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
-
 
 # ==========================
 # Validadores de roles
@@ -30,7 +30,6 @@ def es_lab_o_admin(user):
 def es_autorizado(user):
     return user.is_authenticated and user.rol in ['LAB', 'ADMIN', 'VALIDADOR']
 
-
 # ==========================
 # Decorador personalizado
 # ==========================
@@ -42,25 +41,23 @@ def user_passes_test_with_message(test_func, login_url=None, message="No tienes 
                 return view_func(request, *args, **kwargs)
             if login_url:
                 return redirect(login_url)
-            return redirect('unauthorized')  # Redirect to the unauthorized view
+            return redirect('unauthorized')
         return _wrapped_view
     return decorator
-
 
 # --------------------------
 # Vista principal (inicio)
 # --------------------------
 @login_required
-@user_passes_test_with_message(es_lab_o_admin, message="No tienes permiso para acceder a esta página.")
+@user_passes_test_with_message(es_lab_o_admin)
 def inicio(request):
     return render(request, 'inicio.html')
-
 
 # --------------------------
 # Lista de instrumentos
 # --------------------------
 @login_required
-@user_passes_test_with_message(es_lab_o_admin, message="No tienes permiso para acceder a esta página.")
+@user_passes_test_with_message(es_lab_o_admin)
 def lista_instrumentos(request):
     q = request.GET.get('q', '')
     laboratorio_id = request.GET.get('laboratorio')
@@ -75,10 +72,11 @@ def lista_instrumentos(request):
         instrumentos = instrumentos.filter(
             Q(nombre__icontains=q) |
             Q(tag__icontains=q) |
+            Q(folio__icontains=q) |  # ✅ Se agregó búsqueda por folio
             Q(serie__icontains=q)
         )
 
-    # Filtro por laboratorio (solo para ADMIN)
+    # Filtro por laboratorio
     if laboratorio_id and request.user.rol != 'LAB':
         instrumentos = instrumentos.filter(laboratorio_id=laboratorio_id)
 
@@ -93,8 +91,10 @@ def lista_instrumentos(request):
 # --------------------------
 # Crear nuevo instrumento
 # --------------------------
+from django import forms  # ⚠️ Asegúrate de tener esto también
+
 @login_required
-@user_passes_test_with_message(es_lab_o_admin, message="No tienes permiso para acceder a esta página.")
+@user_passes_test_with_message(es_lab_o_admin)
 def crear_instrumento(request):
     if request.user.rol == 'ADMIN':
         form = InstrumentoForm(request.POST or None, request.FILES or None)
@@ -116,16 +116,14 @@ def crear_instrumento(request):
 
     return render(request, 'instrumentos/formulario.html', {'form': form})
 
-
 # --------------------------
 # Editar instrumento
 # --------------------------
 @login_required
-@user_passes_test_with_message(es_lab_o_admin, message="No tienes permiso para acceder a esta página.")
+@user_passes_test_with_message(es_lab_o_admin)
 def editar_instrumento(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
 
-    # Solo permite editar si el usuario es ADMIN o del laboratorio correspondiente
     if request.user.rol == 'LAB' and instrumento.laboratorio != request.user.laboratorio:
         messages.error(request, "No tienes permiso para editar este instrumento.")
         return redirect('lista_instrumentos')
@@ -135,7 +133,7 @@ def editar_instrumento(request, instrumento_id):
         if form.is_valid():
             instrumento = form.save(commit=False)
             if request.user.rol == 'LAB':
-                instrumento.laboratorio = request.user.laboratorio  # Refuerza la seguridad
+                instrumento.laboratorio = request.user.laboratorio
             instrumento.save()
             messages.success(request, "Instrumento actualizado correctamente.")
             return redirect('lista_instrumentos')
@@ -144,32 +142,29 @@ def editar_instrumento(request, instrumento_id):
 
     return render(request, 'instrumentos/formulario.html', {'form': form})
 
-
 # --------------------------
-# Detalle de instrumento (interno)
+# Detalle de instrumento
 # --------------------------
 @login_required
-@user_passes_test_with_message(es_lab_o_admin, message="No tienes permiso para acceder a esta página.")
+@user_passes_test_with_message(es_lab_o_admin)
 def detalle_instrumento(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
     return render(request, 'instrumentos/detalle.html', {'instrumento': instrumento})
 
-
 # --------------------------
-# Validación pública por UUID (escaneo QR)
+# Validación por UUID (QR)
 # --------------------------
 @login_required
-@user_passes_test_with_message(es_autorizado, message="No tienes permiso para acceder a esta página.")
+@user_passes_test_with_message(es_autorizado)
 def validar_certificado(request, uuid):
     instrumento = get_object_or_404(Instrumento, uuid=uuid)
     return render(request, 'instrumentos/validacion.html', {'instrumento': instrumento})
 
-
 # --------------------------
-# Generar imagen QR (PNG)
+# Generar QR (PNG)
 # --------------------------
 @login_required
-@user_passes_test_with_message(es_lab_o_admin, message="No tienes permiso para acceder a esta página.")
+@user_passes_test_with_message(es_lab_o_admin)
 def generar_qr(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
     url = request.build_absolute_uri(f"/validar/{instrumento.uuid}/")
@@ -179,7 +174,6 @@ def generar_qr(request, instrumento_id):
     buffer.seek(0)
     return HttpResponse(buffer.read(), content_type="image/png")
 
-
 # --------------------------
 # Descargar QR como PDF
 # --------------------------
@@ -187,25 +181,17 @@ def qr_pdf(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
     url = request.build_absolute_uri(f"/validar/{instrumento.uuid}/")
 
-    # Generate QR code as PIL image
     qr_img = qrcode.make(url)
-
-    # Save QR code to BytesIO
     qr_io = BytesIO()
     qr_img.save(qr_io, format='PNG')
     qr_io.seek(0)
 
-    # Convert to ImageReader for reportlab
     qr_image = ImageReader(qr_io)
-
-    # Create PDF
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
 
-    # Draw QR code
     p.drawImage(qr_image, x=200, y=600, width=200, height=200)
 
-    # Add text with instrument data
     p.setFont("Helvetica-Bold", 12)
     p.drawString(100, 550, f"Instrumento: {instrumento.nombre}")
     p.setFont("Helvetica", 11)
@@ -221,16 +207,14 @@ def qr_pdf(request, instrumento_id):
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename=f"{instrumento.tag}_qr.pdf")
 
-
 # --------------------------
-# Logout success page
+# Logout success
 # --------------------------
 def logout_success(request):
     return render(request, 'logout.html')
 
-
 # --------------------------
-# Unauthorized page
+# Página no autorizada
 # --------------------------
 def unauthorized(request, message="No tienes permiso para acceder a esta página."):
     return render(request, 'unauthorized.html', {'message': message})

@@ -10,7 +10,7 @@ class CustomUserCreationForm(UserCreationForm):
 class InstrumentoForm(forms.ModelForm):
     class Meta:
         model = Instrumento
-        fields = ['nombre', 'tag', 'modelo', 'serie', 'fecha_calibracion', 'certificado', 'magnitud']
+        fields = ['nombre', 'tag', 'modelo', 'serie','folio', 'fecha_calibracion', 'certificado', 'magnitud']
         widgets = {
             'fecha_calibracion': forms.DateInput(attrs={'type': 'date'}),
         }
