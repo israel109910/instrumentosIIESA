@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Seguridad
 SECRET_KEY = 'django-insecure-a5o2ri#!uv&wzg3=b((3!n=!0ph6jpz)$kuke6m#0i86vzrz2w'
-DEBUG = True
+DEBUG = True  # Cambia a False en producción
 
 ALLOWED_HOSTS = ['*', 'instrumentosiiesa-production.up.railway.app', 'localhost']
 
@@ -18,13 +18,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',  # Para django-storages y S3
     'codigos',
 ]
 
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise justo después de SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Sirve archivos estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,7 +43,7 @@ ROOT_URLCONF = 'Requerimientos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # Añade rutas si tienes templates fuera de apps
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,19 +84,20 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Archivos multimedia (PDFs)
-MEDIA_URL = '/certificados/'
+# Archivos multimedia
+# Aunque en S3 no usas MEDIA_ROOT ni MEDIA_URL localmente, puedes dejarlo así para pruebas locales
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Redirecciones de login/logout
+# Redirecciones
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
-# Modelo de usuario personalizado
+# Usuario personalizado
 AUTH_USER_MODEL = 'codigos.User'
 
-# Amazon S3 (variables de entorno)
+# Almacenamiento S3
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -105,8 +107,10 @@ AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+# CSRF para Railway
 CSRF_TRUSTED_ORIGINS = [
-    "https://instrumentosiiesa-production.up.railway.app",
+    'https://instrumentosiiesa-production.up.railway.app',
 ]
+
+# Campo por defecto para modelos nuevos
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
