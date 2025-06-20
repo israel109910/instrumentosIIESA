@@ -7,7 +7,7 @@
 
     <form method="get" class="row g-3 mb-4">
         <div class="col-md-4">
-            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Buscar por nombre, tag o número de serie...">
+            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Buscar por nombre, tag, folio o número de serie...">
         </div>
         {% if request.user.rol != 'LAB' %}
         <div class="col-md-3">
@@ -36,6 +36,7 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Tag</th>
+                    <th>Folio</th>
                     <th>Número de Serie</th>
                     <th>Laboratorio</th>
                     <th>Acciones</th>
@@ -46,6 +47,7 @@
                 <tr>
                     <td>{{ instrumento.nombre }}</td>
                     <td>{{ instrumento.tag }}</td>
+                    <td>{{ instrumento.folio }}</td>
                     <td>{{ instrumento.serie }}</td>
                     <td>
                         {% if instrumento.laboratorio %}
@@ -64,7 +66,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center">No se encontraron instrumentos.</td>
+                    <td colspan="6" class="text-center">No se encontraron instrumentos.</td>
                 </tr>
                 {% endfor %}
             </tbody>

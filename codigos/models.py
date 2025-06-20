@@ -44,6 +44,7 @@ class Instrumento(models.Model):
     tag = models.CharField(max_length=100)
     modelo = models.CharField(max_length=100)
     serie = models.CharField(max_length=100)
+    folio = models.CharField(max_length=100)
     fecha_calibracion = models.DateField()
     certificado = models.FileField(upload_to='certificados/', null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
