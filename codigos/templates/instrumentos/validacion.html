@@ -185,7 +185,7 @@
   {% if instrumento.certificado %}
   <script>
     lucide.createIcons();
-
+  
     const url = "{{ instrumento.certificado.url }}";
     let pdfDoc = null,
         pageNum = 1,
@@ -193,13 +193,13 @@
         scale = 1.7,
         canvas = document.getElementById('pdf-canvas'),
         ctx = canvas.getContext('2d');
-
+  
     function renderPage(num) {
       pdfDoc.getPage(num).then(function(page) {
         const viewport = page.getViewport({ scale: scale });
         canvas.height = viewport.height;
         canvas.width = viewport.width;
-
+  
         const renderContext = {
           canvasContext: ctx,
           viewport: viewport
@@ -208,21 +208,24 @@
         document.getElementById('pageNum').textContent = num;
       });
     }
-
-    pdfjsLib.getDocument(url).promise.then(function(pdf) {
+  
+    pdfjsLib.getDocument({ url: url, withCredentials: false }).promise.then(function(pdf) {
       pdfDoc = pdf;
       pageCount = pdf.numPages;
       document.getElementById('pageCount').textContent = pageCount;
       renderPage(pageNum);
+    }).catch(function(error) {
+      console.error('Error al cargar el PDF:', error);
+      document.getElementById('pdf-container').innerHTML = '<p style="color:#f00;">No se pudo cargar el documento PDF.</p>';
     });
-
+  
     document.getElementById('prevPage').addEventListener('click', () => {
       if (pageNum > 1) {
         pageNum--;
         renderPage(pageNum);
       }
     });
-
+  
     document.getElementById('nextPage').addEventListener('click', () => {
       if (pageNum < pageCount) {
         pageNum++;
@@ -230,6 +233,7 @@
       }
     });
   </script>
+  
   {% endif %}
 </body>
 </html>
