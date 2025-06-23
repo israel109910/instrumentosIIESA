@@ -1,238 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Validación de Certificado</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <style>
-    :root {
-      --bg-white: #ffffff;
-      --bg-gray-dark: #555555;
-      --bg-toolbar: #363636;
-      --text-dark: #222;
-      --text-light: #f0f0f0;
-      --accent: #ff9900;
-      --border-color: #ddd;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg-white);
-      color: var(--text-dark);
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 2rem auto 1rem;
-      padding: 0 1.5rem;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: var(--accent);
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.5rem;
-    }
-
-    .info p {
-      margin: 6px 0;
-      font-size: 1rem;
-    }
-
-    .info p strong {
-      color: #555;
-    }
-
-    .toolbar {
-      border-radius: 10px;
-      background-color: var(--bg-toolbar);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 16px;
-      border-bottom: 1px solid #444;
-      margin: 2rem auto 0;
-      max-width: 900px;
-      color: var(--text-light);
-    }
-
-    .toolbar-left, .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .filename {
-      font-weight: bold;
-      font-size: 15px;
-      max-width: 200px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .icon-button {
-      background: transparent;
-      border: none;
-      color: var(--text-light);
-      cursor: pointer;
-      padding: 6px;
-      border-radius: 6px;
-      transition: background 0.2s ease;
-    }
-
-    .icon-button:hover {
-      background-color: #333;
-    }
-
-    #pdf-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: var(--bg-gray-dark);
-      padding: 20px 16px 40px;
-      overflow: auto;
-      max-width: 900px;
-      margin: auto;
-      border-radius: 6px;
-    }
-
-    canvas {
-      max-width: 100%;
-      height: auto;
-      border-radius: 4px;
-      background-color: white;
-    }
-
-    .no-document {
-      padding: 2rem;
-      text-align: center;
-      font-size: 1.2rem;
-      color: #666;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>Validación de Certificado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #007bff;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+        .info {
+            margin-bottom: 1rem;
+        }
+        .info strong {
+            display: inline-block;
+            width: 160px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Validación de Certificado</h1>
+    <div class="container">
+        <h1>Validación de Certificado</h1>
 
-    <div class="info">
-      <p><strong>Instrumento:</strong> {{ instrumento.nombre }}</p>
-      <p><strong>Tag:</strong> {{ instrumento.tag }}</p>
-      <p><strong>Modelo:</strong> {{ instrumento.modelo }}</p>
-      <p><strong>Serie:</strong> {{ instrumento.serie }}</p>
-      <p><strong>Fecha de calibración:</strong> {{ instrumento.fecha_calibracion }}</p>
-      <p><strong>Tiempo transcurrido desde calibración:</strong> {{ instrumento.fecha_calibracion|timesince }} </p>
-      <p><strong>UUID:</strong> {{ instrumento.uuid }}</p>
+        <div class="info">
+            <p><strong>Instrumento:</strong> {{ instrumento.nombre }}</p>
+            <p><strong>Tag:</strong> {{ instrumento.tag }}</p>
+            <p><strong>Modelo:</strong> {{ instrumento.modelo }}</p>
+            <p><strong>Serie:</strong> {{ instrumento.serie }}</p>
+            <p><strong>Fecha de calibración:</strong> {{ instrumento.fecha_calibracion }}</p>
+            <p><strong>UUID:</strong> {{ instrumento.uuid }}</p>
+        </div>
+
+        {% if instrumento.certificado %}
+            <h2>Certificado</h2>
+            <iframe src="{{ instrumento.certificado.url }}" frameborder="0"></iframe>
+        {% else %}
+            <p>No hay documento asociado para este instrumento.</p>
+        {% endif %}
     </div>
-  </div>
-
-  {% if instrumento.certificado %}
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <div class="filename">{{ instrumento.certificado.name }}</div>
-    </div>
-
-    <div class="toolbar-right">
-      <button id="prevPage" class="icon-button" title="Página anterior">
-        <i data-lucide="chevron-left"></i>
-      </button>
-      <span><span id="pageNum">1</span> / <span id="pageCount">?</span></span>
-      <button id="nextPage" class="icon-button" title="Página siguiente">
-        <i data-lucide="chevron-right"></i>
-      </button>
-
-      <a href="{{ instrumento.certificado.url }}" download title="Descargar">
-        <button class="icon-button">
-          <i data-lucide="download"></i>
-        </button>
-      </a>
-      <button onclick="window.print()" class="icon-button" title="Imprimir">
-        <i data-lucide="printer"></i>
-      </button>
-    </div>
-  </div>
-
-  <div id="pdf-container">
-    <canvas id="pdf-canvas"></canvas>
-  </div>
-  {% else %}
-  <div class="no-document">
-    No hay documento asociado para este instrumento.
-  </div>
-  {% endif %}
-
-  {% if instrumento.certificado %}
-  <script>
-    lucide.createIcons();
-  
-    const url = "{{ instrumento.certificado.url }}";
-    let pdfDoc = null,
-        pageNum = 1,
-        pageCount = 0,
-        scale = 1.7,
-        canvas = document.getElementById('pdf-canvas'),
-        ctx = canvas.getContext('2d');
-  
-    function renderPage(num) {
-      pdfDoc.getPage(num).then(function(page) {
-        const viewport = page.getViewport({ scale: scale });
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-  
-        const renderContext = {
-          canvasContext: ctx,
-          viewport: viewport
-        };
-        page.render(renderContext);
-        document.getElementById('pageNum').textContent = num;
-      });
-    }
-  
-    pdfjsLib.getDocument({ url: url, withCredentials: false }).promise.then(function(pdf) {
-      pdfDoc = pdf;
-      pageCount = pdf.numPages;
-      document.getElementById('pageCount').textContent = pageCount;
-      renderPage(pageNum);
-    }).catch(function(error) {
-      console.error('Error al cargar el PDF:', error);
-      document.getElementById('pdf-container').innerHTML = '<p style="color:#f00;">No se pudo cargar el documento PDF.</p>';
-    });
-  
-    document.getElementById('prevPage').addEventListener('click', () => {
-      if (pageNum > 1) {
-        pageNum--;
-        renderPage(pageNum);
-      }
-    });
-  
-    document.getElementById('nextPage').addEventListener('click', () => {
-      if (pageNum < pageCount) {
-        pageNum++;
-        renderPage(pageNum);
-      }
-    });
-  </script>
-  
-  {% endif %}
 </body>
 </html>
