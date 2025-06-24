@@ -27,17 +27,18 @@
         </a>
     </div>
 
-    {% if instrumento.certificado and instrumento.certificado.url %}
-        <h4 class="mt-5">Certificado</h4>
-        <iframe src="{{ instrumento.certificado.url }}" class="w-100 border rounded" style="height: 600px;"></iframe>
-        <a href="{{ instrumento.certificado.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-            Ver Certificado Completo PDF
-        </a>
-        
+    {% if instrumento.certificado %}
+    <h2>Certificado</h2>
+    <iframe 
+    src="{{ instrumento.certificado.url }}?v={{ instrumento.fecha_calibracion|date:'YmdHis' }}" 
+    style="border: none;">
+    </iframe>
+
+    <a href="{{ instrumento.certificado.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+        Ver Certificado Completo PDF
+    </a>
     {% else %}
-        <div class="alert alert-warning mt-4">
-            No hay certificado disponible para este instrumento.
-        </div>
+    <p>No hay documento asociado para este instrumento.</p>
     {% endif %}
 </div>
 {% endblock %}
