@@ -29,11 +29,7 @@
 
     {% if instrumento.certificado %}
     <h2>Certificado</h2>
-    <iframe 
-    src="{{ instrumento.certificado.url }}?v={{ instrumento.fecha_calibracion|date:'YmdHis' }}" 
-    style="border: none;">
-    </iframe>
-
+    <iframe src="{{ instrumento.certificado.url }}" frameborder="0"></iframe>
     <a href="{{ instrumento.certificado.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
         Ver Certificado Completo PDF
     </a>
