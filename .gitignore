@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.sqlite3
+
+# Ignore media folder (archivos subidos)
+media/
+
+# Ignore environment variables / virtualenv folders
+.env
+env/
+venv/
+ENV/
+.venv/
+
+# Ignore IDE/editor folders
+.vscode/
+.idea/
+
+# Ignore migrations (opcional, pero recomendado)
+*/migrations/
