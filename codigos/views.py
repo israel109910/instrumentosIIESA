@@ -4,7 +4,7 @@ from django.contrib import messages  # ✅ Import necesario para usar messages
 from django.http import HttpResponse, FileResponse, HttpResponseForbidden
 from django.db.models import Q
 from .models import Instrumento, Laboratorio
-from .forms import InstrumentoForm
+from .forms import InstrumentoForm, InstrumentoFormLab
 from io import BytesIO
 import qrcode
 from reportlab.pdfgen import canvas
@@ -99,22 +99,18 @@ def crear_instrumento(request):
     if request.user.rol == 'ADMIN':
         form = InstrumentoForm(request.POST or None, request.FILES or None)
     else:
-        class InstrumentoFormLab(forms.ModelForm):
-            class Meta:
-                model = Instrumento
-                exclude = ['laboratorio']
         form = InstrumentoFormLab(request.POST or None, request.FILES or None)
 
-    if request.method == 'POST':
-        if form.is_valid():
-            instrumento = form.save(commit=False)
-            if request.user.rol == 'LAB':
-                instrumento.laboratorio = request.user.laboratorio
-            instrumento.save()
-            messages.success(request, "Instrumento creado correctamente.")
-            return redirect('lista_instrumentos')
+    if request.method == 'POST' and form.is_valid():
+        instrumento = form.save(commit=False)
+        if request.user.rol == 'LAB':
+            instrumento.laboratorio = request.user.laboratorio
+        instrumento.save()
+        messages.success(request, "Instrumento creado correctamente.")
+        return redirect('lista_instrumentos')
 
     return render(request, 'instrumentos/formulario.html', {'form': form})
+
 
 # --------------------------
 # Editar instrumento
