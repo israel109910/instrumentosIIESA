@@ -29,7 +29,11 @@
 
     {% if instrumento.certificado and instrumento.certificado.url %}
         <h4 class="mt-5">Certificado</h4>
-        <iframe src="http://docs.google.com/gview?url=${{ instrumento.certificado.url }}&embedded=true" class="w-100 border rounded" style="height: 600px;"></iframe>
+        <iframe src="{{ instrumento.certificado.url }}" class="w-100 border rounded" style="height: 600px;"></iframe>
+        <a href="{{ instrumento.certificado.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            Ver Certificado Completo PDF
+        </a>
+        
     {% else %}
         <div class="alert alert-warning mt-4">
             No hay certificado disponible para este instrumento.
