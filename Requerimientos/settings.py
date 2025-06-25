@@ -58,16 +58,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Requerimientos.wsgi.application'
 
 # Base de datos
-DATABASES = {
+DATABASES ={
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  
-        'NAME': 'iiesa_django_instruments',
-        'USER': 'iiesa_instrument',
-        'PASSWORD': 'IsraNava109910!',
-        'HOST': 'database-iiesa-instrumentos.cvy2waog66nf.us-east-2.rds.amazonaws.com',
-        'PORT': '5432',  
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+#{
+    
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',  
+#        'NAME': 'iiesa_django_instruments',
+#        'USER': 'iiesa_instrument',
+#        'PASSWORD': 'IsraNava109910!',
+#        'HOST': 'database-iiesa-instrumentos.cvy2waog66nf.us-east-2.rds.amazonaws.com',
+#       'PORT': '5432',  
+#   }
+#}
 
 # Validadores de contraseña
 AUTH_PASSWORD_VALIDATORS = [
