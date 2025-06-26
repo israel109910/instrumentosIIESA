@@ -13,18 +13,42 @@
             max-width: 700px;
             margin: auto;
             background: white;
-            padding: 1.5rem;
+            padding: 1.5rem 2rem 2rem 2rem;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        h1, h2 {
+        /* Contenedor header flex */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ffae00;
+            padding-bottom: 0.5rem;
+        }
+        .header img {
+            height: 50px;
+            margin-right: 1rem;
+            object-fit: contain;
+        }
+        .header h1 {
+            flex-grow: 1;
+            text-align: center;
             color: #ffae00;
+            font-weight: bold;
+            font-size: 1.8rem;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            color: #ffae00;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
         }
         iframe {
             width: 100%;
             height: 600px;
             border: 1px solid #ddd;
-            margin-top: 1rem;
             border-radius: 4px;
         }
         .info {
@@ -42,9 +66,12 @@
             color: white;
             text-decoration: none;
             border-radius: 4px;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
         .btn-primary:hover {
-            background-color: #ffae00;
+            background-color: #e69900;
         }
         .alert {
             margin-top: 1rem;
@@ -58,13 +85,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Validación de Certificado</h1>
+
+        <div class="header">
+            <!-- Logo IIESA -->
+            <img src="https://www.iiesa-solutions.com.mx/wp-content/uploads/2019/02/IIESA-LOGOTIPO_Mesa-de-trabajo-1.png" alt="IIESA Logo" />
+            <!-- Título centrado -->
+            <h1>Validación de Certificado</h1>
+        </div>
 
         <div class="info">
             <p><strong>Instrumento:</strong> {{ instrumento.nombre }}</p>
             <p><strong>Tag:</strong> {{ instrumento.tag }}</p>
             <p><strong>Modelo:</strong> {{ instrumento.modelo }}</p>
             <p><strong>Serie:</strong> {{ instrumento.serie }}</p>
+            <p><strong>Folio:</strong> {{ instrumento.folio }}</p>
             <p><strong>Fecha de calibración:</strong> {{ instrumento.fecha_calibracion }}</p>
             <p><strong>Tiempo transcurrido desde calibración:</strong> {{ instrumento.fecha_calibracion|timesince }} </p>
             <p><strong>UUID:</strong> {{ instrumento.uuid }}</p>
@@ -73,8 +107,8 @@
         {% if instrumento.certificado %}
             <h2>Certificado</h2>
             <iframe src="{{ instrumento.certificado.url }}" frameborder="0"></iframe>
-            <a href="{{ instrumento.certificado.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                Ver Certificado Completo PDF
+            <a href="{{ instrumento.certificado.url }}" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                Descargar Certificado PDF
             </a>
         {% else %}
             <div class="alert">

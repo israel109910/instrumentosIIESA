@@ -10,6 +10,8 @@ import qrcode
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
+import os
+from django.conf import settings
 
 # ==========================
 # Validadores de roles
@@ -177,30 +179,51 @@ def qr_pdf(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
     url = request.build_absolute_uri(f"/validar/{instrumento.uuid}/")
 
+    # Generar código QR
     qr_img = qrcode.make(url)
     qr_io = BytesIO()
     qr_img.save(qr_io, format='PNG')
     qr_io.seek(0)
-
     qr_image = ImageReader(qr_io)
+
+    # Ruta del logotipo local
+    logo_path = os.path.join(settings.BASE_DIR, '', 'imagenes', 'LOGO.png')
+    logo_image = ImageReader(logo_path)
+
+    # Crear PDF
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
 
-    p.drawImage(qr_image, x=200, y=600, width=200, height=200)
+    # Dibujar logo
+    p.drawImage(logo_image, x=50, y=height - 100, width=200, height=60, preserveAspectRatio=True)
 
+    # Título
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(220, height - 80, "Certificado de Instrumento")
+
+    # Código QR
+    p.drawImage(qr_image, x=200, y=height - 350, width=200, height=200)
+
+    # Información del instrumento
+    y_start = height - 370
+    spacing = 20
     p.setFont("Helvetica-Bold", 12)
-    p.drawString(100, 550, f"Instrumento: {instrumento.nombre}")
-    p.setFont("Helvetica", 11)
-    p.drawString(100, 530, f"Tag: {instrumento.tag}")
-    p.drawString(100, 510, f"Modelo: {instrumento.modelo}")
-    p.drawString(100, 490, f"Serie: {instrumento.serie}")
-    p.drawString(100, 470, f"Fecha de calibración: {instrumento.fecha_calibracion.strftime('%d/%m/%Y')}")
-    p.drawString(100, 450, f"UUID: {instrumento.uuid}")
+    p.drawString(100, y_start, f"Instrumento: {instrumento.nombre}")
 
+    p.setFont("Helvetica", 11)
+    p.drawString(100, y_start - spacing, f"Tag: {instrumento.tag}")
+    p.drawString(100, y_start - 2 * spacing, f"Modelo: {instrumento.modelo}")
+    p.drawString(100, y_start - 3 * spacing, f"Serie: {instrumento.serie}")
+    p.drawString(100, y_start - 4 * spacing, f"Folio: {instrumento.folio}")
+    p.drawString(100, y_start - 5 * spacing, f"Fecha de calibración: {instrumento.fecha_calibracion.strftime('%d/%m/%Y')}")
+    p.drawString(100, y_start - 6 * spacing, f"UUID: {instrumento.uuid}")
+
+    # Finalizar PDF
     p.showPage()
     p.save()
-
     buffer.seek(0)
+
     return FileResponse(buffer, as_attachment=True, filename=f"{instrumento.tag}_qr.pdf")
 
 # --------------------------
