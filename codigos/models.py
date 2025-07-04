@@ -46,6 +46,7 @@ class Instrumento(models.Model):
     serie = models.CharField(max_length=100)
     folio = models.CharField(max_length=100)
     fecha_calibracion = models.DateField()
+    quien_calibro = models.CharField(max_length=100, null=True, blank=True)
     certificado = models.FileField(upload_to='certificados/', null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     magnitud = models.CharField(max_length=20, choices=MAGNITUD_CHOICES, default='temperatura')

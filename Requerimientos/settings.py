@@ -5,8 +5,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Seguridad
-SECRET_KEY = 'django-insecure-a5o2ri#!uv&wzg3=b((3!n=!0ph6jpz)$kuke6m#0i86vzrz2w'
-DEBUG = True  # Cambia a False en producción
+SECRET_KEY = '+bh4@(y1sbv2c#+1p179=$fgj-oht55g0k3o!0c0wo#hz#y%&q'
+DEBUG = False  # Cambia a False en producción
 
 ALLOWED_HOSTS = ['*', 'instrumentosiiesa-production.up.railway.app', 'localhost']
 
