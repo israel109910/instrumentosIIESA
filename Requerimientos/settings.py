@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 
 # Directorio base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -58,17 +59,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Requerimientos.wsgi.application'
 
 # Base de datos
-DATABASES ={
-    
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',  
-        'NAME': 'iiesa_django_instruments',
-        'USER': 'iiesa_instrument',
-        'PASSWORD': 'IsraNava109910!',
-        'HOST': 'database-iiesa-instrumentos.cvy2waog66nf.us-east-2.rds.amazonaws.com',
-       'PORT': '5432',  
-   }
+DATABASES = {
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
+
 #{
  #   'default': {
   #      'ENGINE': 'django.db.backends.sqlite3',
