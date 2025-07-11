@@ -65,20 +65,20 @@ def lista_instrumentos(request):
     laboratorio_id = request.GET.get('laboratorio')
     instrumentos = Instrumento.objects.all()
 
-    # Filtro por rol de usuario
+    # FILTRO por rol: si es LAB, solo ve los instrumentos de su laboratorio
     if request.user.rol == 'LAB':
         instrumentos = instrumentos.filter(laboratorio=request.user.laboratorio)
 
-    # Filtro por búsqueda
+    # FILTRO por búsqueda (nombre, tag, folio, serie)
     if q:
         instrumentos = instrumentos.filter(
             Q(nombre__icontains=q) |
             Q(tag__icontains=q) |
-            Q(folio__icontains=q) |  # ✅ Se agregó búsqueda por folio
+            Q(folio__icontains=q) |
             Q(serie__icontains=q)
         )
 
-    # Filtro por laboratorio
+    # FILTRO por laboratorio solo si es ADMIN
     if laboratorio_id and request.user.rol != 'LAB':
         instrumentos = instrumentos.filter(laboratorio_id=laboratorio_id)
 
