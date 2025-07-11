@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Seguridad
 SECRET_KEY = '+bh4@(y1sbv2c#+1p179=$fgj-oht55g0k3o!0c0wo#hz#y%&q'
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ['true', '1', 't']
+DEBUG = False
  # Cambia a False en producción
 
 ALLOWED_HOSTS = ['*', 'instrumentosiiesa-production.up.railway.app', 'localhost']
