@@ -131,7 +131,7 @@ AWS_DEFAULT_ACL          = None
 
 # CSRF para Railway
 CSRF_TRUSTED_ORIGINS = [
-    'https://instrumentosiiesa-production.up.railway.app',
+    'instrumentos-iiesa.up.railway.app',
 ]
 
 # Campo por defecto para modelos nuevos
