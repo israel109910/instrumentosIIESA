@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Seguridad
 SECRET_KEY = '+bh4@(y1sbv2c#+1p179=$fgj-oht55g0k3o!0c0wo#hz#y%&q'
-DEBUG = False
+DEBUG = True
  # Cambia a False en producción
 
 ALLOWED_HOSTS = ['*', 'instrumentosiiesa-production.up.railway.app', 'localhost']
@@ -131,7 +131,8 @@ AWS_DEFAULT_ACL          = None
 
 # CSRF para Railway
 CSRF_TRUSTED_ORIGINS = [
-    'instrumentos-iiesa.up.railway.app',
+    'https://instrumentos-iiesa.up.railway.app',
+    'http://localhost:8000'
 ]
 
 # Campo por defecto para modelos nuevos
