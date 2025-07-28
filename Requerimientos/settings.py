@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
+load_dotenv()
 
 # Directorio base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
