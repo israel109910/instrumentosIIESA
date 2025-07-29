@@ -12,7 +12,9 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 import os
 from django.conf import settings
-
+from .models import Sitio
+from .models import ParametrosGlobales
+from .models import Estado, Seccion  # Asegúrate de importar los modelos adicionales
 # ==========================
 # Validadores de roles
 # ==========================
@@ -225,6 +227,51 @@ def qr_pdf(request, instrumento_id):
     buffer.seek(0)
 
     return FileResponse(buffer, as_attachment=True, filename=f"{instrumento.tag}_qr.pdf")
+
+from django.core.serializers import serialize
+from django.http import JsonResponse
+from .models import Estado, Seccion, Sitio, ParametrosGlobales
+import json
+
+def calcular_viaticos(request):
+    estados = Estado.objects.all()
+    secciones = Seccion.objects.all()
+    sitios = Sitio.objects.all()
+    resultado = None
+
+    if request.method == 'POST':
+        sitio_id = request.POST.get('sitio')
+        personas = int(request.POST.get('personas'))
+        dias = int(request.POST.get('dias'))
+        herramientas = request.POST.get('herramientas') == 'on'
+
+        sitio = Sitio.objects.get(id=sitio_id)
+        parametros = ParametrosGlobales.objects.first()
+
+        km_totales = sitio.distancia_km
+        peso_personal = personas * parametros.peso_prom_persona
+        peso_herramientas = parametros.peso_herramienta if herramientas else 0.0
+        peso_total = peso_personal + peso_herramientas
+        peso_relativo = peso_total / 100
+        rendimiento_ajustado = parametros.rendimiento_km_l - (peso_relativo / parametros.factor_penalizacion)
+        costo_gasolina = ((km_totales / rendimiento_ajustado) * parametros.precio_gasolina) * dias
+
+        resultado = {
+            'sitio': sitio.nombre,
+            'costo_total': round(costo_gasolina, 2)
+        }
+
+    # Preparamos los diccionarios para JS
+    secciones_dict = {s.id: {'nombre': s.nombre, 'estado_id': s.estado.id} for s in secciones}
+    sitios_dict = {s.id: {'nombre': s.nombre, 'seccion_id': s.seccion.id} for s in sitios}
+
+    return render(request, 'viaticos.html', {
+        'estados': estados,
+        'resultado': resultado,
+        'secciones_json': json.dumps(secciones_dict),
+        'sitios_json': json.dumps(sitios_dict),
+    })
+
 
 # --------------------------
 # Logout success
