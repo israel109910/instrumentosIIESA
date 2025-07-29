@@ -2,6 +2,7 @@ from django.urls import path
 from django.http import HttpResponse
 from django.contrib.auth.views import LogoutView
 from . import views
+
 urlpatterns = [
 
     path('', views.inicio, name='inicio'),
@@ -14,5 +15,7 @@ urlpatterns = [
     path('validar/<uuid:uuid>/', views.validar_certificado, name='validar_certificado'),
     path('unauthorized/', views.unauthorized, name='unauthorized'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('viaticos/', views.calcular_viaticos, name='viaticos'),
+
 
 ]

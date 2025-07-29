@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Viáticos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos personalizados (opcional) -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            max-width: 700px;
+            margin: 40px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container form-container p-4 border rounded shadow bg-white">
+        <h2 class="mb-4 text-primary">Calculadora de Viáticos</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="estado" class="form-label">Estado:</label>
+                <select name="estado" id="estado" class="form-select" required>
+                    <option value="">Selecciona un estado</option>
+                    {% for estado in estados %}
+                        <option value="{{ estado.id }}">{{ estado.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="seccion" class="form-label">Sección:</label>
+                <select name="seccion" id="seccion" class="form-select" required>
+                    <option value="">Selecciona una sección</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="sitio" class="form-label">Sitio:</label>
+                <select name="sitio" id="sitio" class="form-select" required>
+                    <option value="">Selecciona un sitio</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="personas" class="form-label">Cantidad de personas:</label>
+                <input type="number" name="personas" id="personas" class="form-control" required min="1">
+            </div>
+
+            <div class="mb-3">
+                <label for="dias" class="form-label">Días de trabajo:</label>
+                <input type="number" name="dias" id="dias" class="form-control" required min="1">
+            </div>
+
+            <div class="form-check mb-3">
+                <input type="checkbox" name="herramientas" id="herramientas" class="form-check-input">
+                <label class="form-check-label" for="herramientas">¿Lleva herramienta?</label>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Calcular</button>
+            </div>
+        </form>
+    </div>
+
+    {% if resultado %}
+    <div class="container mt-4 p-4 border rounded bg-white shadow-sm">
+        <h3 class="text-success">Resultado</h3>
+        <p><strong>Sitio:</strong> {{ resultado.sitio }}</p>
+        <p><strong>Costo total estimado:</strong> ${{ resultado.costo_total }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Scripts -->
+    <script>
+        const secciones = {{ secciones_json|safe }};
+        const sitios = {{ sitios_json|safe }};
+
+        document.getElementById('estado').addEventListener('change', function () {
+            const estadoId = this.value;
+            const seccionSelect = document.getElementById('seccion');
+            seccionSelect.innerHTML = '<option value="">Selecciona una sección</option>';
+
+            Object.entries(secciones).forEach(([id, seccion]) => {
+                if (seccion.estado_id == estadoId) {
+                    seccionSelect.innerHTML += `<option value="${id}">${seccion.nombre}</option>`;
+                }
+            });
+
+            document.getElementById('sitio').innerHTML = '<option value="">Selecciona un sitio</option>';
+        });
+
+        document.getElementById('seccion').addEventListener('change', function () {
+            const seccionId = this.value;
+            const sitioSelect = document.getElementById('sitio');
+            sitioSelect.innerHTML = '<option value="">Selecciona un sitio</option>';
+
+            Object.entries(sitios).forEach(([id, sitio]) => {
+                if (sitio.seccion_id == seccionId) {
+                    sitioSelect.innerHTML += `<option value="${id}">${sitio.nombre}</option>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

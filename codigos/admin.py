@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Laboratorio, Instrumento
+from .models import Sitio, User, Laboratorio, Instrumento
+from .models import ParametrosGlobales  
+from .models import Estado, Seccion  # Asegúrate de importar los modelos adicionales
 
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'rol', 'laboratorio', 'is_staff', 'is_active')
@@ -16,3 +18,7 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Laboratorio)
 admin.site.register(Instrumento)
+admin.site.register(Sitio)
+admin.site.register(ParametrosGlobales)     
+admin.site.register(Estado) 
+admin.site.register(Seccion)  # Asegúrate de registrar el modelo Seccion  
