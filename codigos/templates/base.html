@@ -7,24 +7,53 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+    <!-- Font Awesome (opcional si usas íconos como fa-tools) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #f1f3f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        main.container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .dropdown-menu .dropdown-item.text-muted {
+            cursor: default;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding: 1rem 0;
+            background-color: #212529;
+            color: #adb5bd;
+            text-align: center;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
+  <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
       <img src="https://www.iiesa-solutions.com.mx/wp-content/uploads/2019/05/IIESA-LOGOTIPO-footer_Mesa-de-trabajo-1-copia-2.png" 
            alt="IIESA Logo" 
-           style="height: 50px; margin-right: 10px;">
-      <span>Instrumentos</span>
+           style="height: 45px; margin-right: 10px;">
+      <span class="fw-bold">IIESA - Sistema</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
       <span class="navbar-toggler-icon"></span>
@@ -34,7 +63,7 @@
       <ul class="navbar-nav ms-auto">
         {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'lista_instrumentos' %}">Gestión de Instrumentos</a>
+            <a class="nav-link" href="{% url 'lista_instrumentos' %}"><i class="bi bi-gear-fill"></i> Instrumentos</a>
           </li>
 
           <!-- Usuario -->
@@ -44,7 +73,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li class="dropdown-item text-muted">
-                Rol: 
+                <strong>Rol:</strong>
                 {% if user.rol %}
                   {{ user.rol }}
                 {% else %}
@@ -63,16 +92,22 @@
             </ul>
           </li>
         {% else %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</a>
+          </li>
         {% endif %}
       </ul>
     </div>
   </div>
 </nav>
 
-<main class="container my-4">
+<main class="container my-5">
     {% block content %}{% endblock %}
 </main>
+
+<footer>
+    &copy; {{ now.year }} IIESA Solutions. Todos los derechos reservados.
+</footer>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
