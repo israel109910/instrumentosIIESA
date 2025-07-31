@@ -49,11 +49,17 @@ def user_passes_test_with_message(test_func, login_url=None, message="No tienes 
     return decorator
 
 # --------------------------
-# Vista principal (inicio)
+# Vista principal instrumentos(inicio)
 # --------------------------
+
 @login_required
 @user_passes_test_with_message(es_lab_o_admin)
 def inicio(request):
+    return render(request, 'main.html')
+
+@login_required
+@user_passes_test_with_message(es_lab_o_admin)
+def inicio_instrumentos(request):
     return render(request, 'inicio.html')
 
 # --------------------------
@@ -154,6 +160,7 @@ def editar_instrumento(request, instrumento_id):
 def detalle_instrumento(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
     return render(request, 'instrumentos/detalle.html', {'instrumento': instrumento})
+
 
 # --------------------------
 # Validación por UUID (QR)
