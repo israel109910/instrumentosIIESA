@@ -21,4 +21,4 @@ admin.site.register(Instrumento)
 admin.site.register(Sitio)
 admin.site.register(ParametrosGlobales)     
 admin.site.register(Estado) 
-admin.site.register(Seccion)  # Asegúrate de registrar el modelo Seccion  
+admin.site.register(Seccion) 

@@ -74,6 +74,8 @@ class Instrumento(models.Model):
 class Sitio(models.Model):
     nombre = models.CharField(max_length=100)
     distancia_km = models.DecimalField(max_digits=6, decimal_places=2)  # ida y vuelta
+    requiere_tag = models.BooleanField(default=False)  # Si requiere tag del instrumento
+    costo_peaje = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)  # Costo de peaje
     seccion = models.ForeignKey('Seccion', on_delete=models.CASCADE, related_name='sitios')
 
     class Meta:
