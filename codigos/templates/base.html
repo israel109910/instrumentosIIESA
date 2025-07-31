@@ -36,7 +36,10 @@
         }
 
         footer {
-            margin-top: 3rem;
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
             padding: 1rem 0;
             background-color: #212529;
             color: #adb5bd;
@@ -105,8 +108,12 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer>
+<footer class="mb-0">
     &copy; {{ now.year }} IIESA Solutions. Todos los derechos reservados.
+    <br>
+    <b><a href="https://www.iiesa-solutions.com/" target="_blank">iiesa-solutions.com</a></b>
+
+  
 </footer>
 
 <!-- Bootstrap JS -->
