@@ -4,17 +4,14 @@ import dj_database_url
 from dotenv import load_dotenv
 load_dotenv()
 
-# Directorio base del proyecto
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Seguridad
 SECRET_KEY = '+bh4@(y1sbv2c#+1p179=$fgj-oht55g0k3o!0c0wo#hz#y%&q'
 DEBUG = True
- # Cambia a False en producción
 
 ALLOWED_HOSTS = ['*', 'instrumentosiiesa-production.up.railway.app', 'localhost']
 
-# Aplicaciones instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -22,14 +19,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storages',  # Para django-storages y S3
+    'storages',  # Importante para S3
     'codigos',
 ]
 
-# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Sirve archivos estáticos
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -40,10 +36,8 @@ MIDDLEWARE = [
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-# URL raíz de la app
 ROOT_URLCONF = 'Requerimientos.urls'
 
-# Plantillas
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -61,21 +55,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Requerimientos.wsgi.application'
 
-# Base de datos
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')  # Aquí 'DATABASE_URL' es el nombre de la variable
-    )
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
-#{
- #   'default': {
-  #      'ENGINE': 'django.db.backends.sqlite3',
-    #    'NAME': BASE_DIR / 'db.sqlite3',
-   # }
-#}
-
-# Validadores de contraseña
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -83,7 +66,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Idioma y zona horaria
 LANGUAGE_CODE = 'es'
 TIME_ZONE = 'America/Mexico_City'
 USE_I18N = True
@@ -94,8 +76,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Archivos multimedia
-# Aunque en S3 no usas MEDIA_ROOT ni MEDIA_URL localmente, puedes dejarlo así para pruebas locales
+# Archivos multimedia (para desarrollo local)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -107,35 +88,28 @@ LOGIN_URL = '/accounts/login/'
 # Usuario personalizado
 AUTH_USER_MODEL = 'codigos.User'
 
-# Almacenamiento S3
-# settings.py — sección S3
+# ===== CONFIGURACIÓN S3 =====
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-AWS_ACCESS_KEY_ID        = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY    = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME  = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'us-east-2'
 
-AWS_S3_REGION_NAME       = 'us-east-2'
+AWS_S3_ADDRESSING_STYLE = 'virtual'  # o 'path' si usas path-style URLs
+AWS_QUERYSTRING_AUTH = False          # Para URLs públicas sin firma temporal
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
 
-# Fuerza Signature v4
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-
-# Usa path-style URLs en vez de virtual-hosted
-AWS_S3_ADDRESSING_STYLE  = 'path'
-
-# Apunta al endpoint regional de path-style
-AWS_S3_ENDPOINT_URL      = f'https://s3.{AWS_S3_REGION_NAME}.amazonaws.com'
-
-AWS_QUERYSTRING_AUTH     = True
-AWS_S3_FILE_OVERWRITE    = True
-AWS_DEFAULT_ACL          = None
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 
-# CSRF para Railway
+# CSRF confiables
 CSRF_TRUSTED_ORIGINS = [
     'https://instrumentos-iiesa.up.railway.app',
     'http://localhost:8000'
 ]
 
-# Campo por defecto para modelos nuevos
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+print("AWS_STORAGE_BUCKET_NAME =", os.getenv('AWS_STORAGE_BUCKET_NAME'))
