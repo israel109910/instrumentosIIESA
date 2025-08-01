@@ -14,6 +14,16 @@ import os
 from django.conf import settings
 import json
 
+from django.http import HttpResponse
+import os
+
+def debug_env(request):
+    return HttpResponse(
+        f"AWS_ACCESS_KEY_ID: {os.getenv('AWS_ACCESS_KEY_ID')}<br>"
+        f"AWS_SECRET_ACCESS_KEY: {'Set' if os.getenv('AWS_SECRET_ACCESS_KEY') else 'No Set'}<br>"
+        f"AWS_STORAGE_BUCKET_NAME: {os.getenv('AWS_STORAGE_BUCKET_NAME')}"
+    )
+
 # ==========================
 # Validadores de roles
 # ==========================
