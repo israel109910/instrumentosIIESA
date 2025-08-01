@@ -17,6 +17,8 @@ urlpatterns = [
     path('unauthorized/', views.unauthorized, name='unauthorized'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('viaticos/', views.calcular_viaticos, name='viaticos'),
+    path('debug-env/', views.debug_env, name='debug_env'),
+
 
 
 ]

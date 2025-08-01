@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = '+bh4@(y1sbv2c#+1p179=$fgj-oht55g0k3o!0c0wo#hz#y%&q'
@@ -96,13 +97,13 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = 'us-east-2'
 
-AWS_S3_ADDRESSING_STYLE = 'virtual'  # o 'path' si usas path-style URLs
-AWS_QUERYSTRING_AUTH = False          # Para URLs públicas sin firma temporal
+AWS_QUERYSTRING_AUTH = False  # para URLs públicas sin firma
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
 
 
 # CSRF confiables
@@ -112,4 +113,5 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-print("AWS_STORAGE_BUCKET_NAME =", os.getenv('AWS_STORAGE_BUCKET_NAME'))
+
+
