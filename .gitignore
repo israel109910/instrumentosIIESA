@@ -25,3 +25,6 @@ ENV/
 
 # Ignore migrations (opcional, pero recomendado)
 */migrations/
+# Claves de servicios externos
+gcs-key.json
+*.json

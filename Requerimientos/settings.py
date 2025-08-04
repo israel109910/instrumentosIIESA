@@ -1,8 +1,8 @@
 import os
+import json
 from pathlib import Path
 import dj_database_url
-
-DEBUG =True
+from google.oauth2 import service_account
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -12,7 +12,6 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
-# Aplicaciones instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -20,13 +19,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storages',          # Para S3
-    'codigos',           # Tu app
+    'storages',
+    'codigos',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir estáticos en producción
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,7 +41,7 @@ ROOT_URLCONF = 'Requerimientos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Si tienes carpeta templates
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,11 +68,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'es'
-
 TIME_ZONE = 'America/Mexico_City'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Archivos estáticos
@@ -81,17 +77,20 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media (archivos subidos) en S3
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-MEDIA_URL = f'https://{os.getenv("AWS_STORAGE_BUCKET_NAME")}.s3.amazonaws.com/'
+# Archivos MEDIA en Google Cloud Storage
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME', 'certificados-iiesa')
 
-# Configuración de AWS S3
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-2')
-AWS_QUERYSTRING_AUTH = False  # URLs limpias
+# Lee el JSON desde una variable de entorno
+GCP_CREDENTIALS_JSON = os.getenv('GCP_CREDENTIALS_JSON')
+if GCP_CREDENTIALS_JSON:
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
+        json.loads(GCP_CREDENTIALS_JSON)
+    )
+else:
+    GS_CREDENTIALS = None  # Esto te permitirá detectar si no se configuró correctamente
 
+MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
 
 # Redirecciones de login/logout
 LOGIN_REDIRECT_URL = '/'
