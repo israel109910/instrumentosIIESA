@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'tu-secret-key-por-defecto-en-desarrollo')
 
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
+DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
