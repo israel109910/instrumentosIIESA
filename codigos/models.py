@@ -61,6 +61,12 @@ class Instrumento(models.Model):
     magnitud = models.CharField(max_length=20, choices=MAGNITUD_CHOICES, default='temperatura')
     laboratorio = models.ForeignKey('Laboratorio', on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.certificado:
+            print("Archivo certificado guardado en:", self.certificado.url)
+            print("Nombre archivo:", self.certificado.name)
+
     def __str__(self):
         return f"{self.nombre} - {self.tag}"
 
