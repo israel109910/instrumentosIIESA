@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import dj_database_url
 
+DEBUG =True
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,7 +84,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media (archivos subidos) en S3
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_URL = f'https://{os.getenv("AWS_STORAGE_BUCKET_NAME")}.s3.amazonaws.com/'
-MEDIA_ROOT = None  # No se usa en S3
 
 # Configuración de AWS S3
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
