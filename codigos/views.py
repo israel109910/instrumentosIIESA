@@ -13,16 +13,9 @@ from reportlab.lib.utils import ImageReader
 import os
 from django.conf import settings
 import json
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
-from django.http import HttpResponse
-import os
-
-def debug_env(request):
-    return HttpResponse(
-        f"AWS_ACCESS_KEY_ID: {os.getenv('AWS_ACCESS_KEY_ID')}<br>"
-        f"AWS_SECRET_ACCESS_KEY: {'Set' if os.getenv('AWS_SECRET_ACCESS_KEY') else 'No Set'}<br>"
-        f"AWS_STORAGE_BUCKET_NAME: {os.getenv('AWS_STORAGE_BUCKET_NAME')}"
-    )
 
 # ==========================
 # Validadores de roles
@@ -152,6 +145,11 @@ def editar_instrumento(request, instrumento_id):
             if request.user.rol == 'LAB':
                 instrumento.laboratorio = request.user.laboratorio
             instrumento.save()
+            # Guardar certificado explícitamente en S3 si se subió uno nuevo
+            if 'certificado' in request.FILES:
+                certificado_file = request.FILES['certificado']
+                file_path = instrumento.certificado.field.upload_to(instrumento, certificado_file.name)
+                default_storage.save(file_path, certificado_file)
             messages.success(request, "Instrumento actualizado correctamente.")
             return redirect('lista_instrumentos')
     else:

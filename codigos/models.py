@@ -34,8 +34,6 @@ class Laboratorio(models.Model):
     def __str__(self):
         return self.nombre
 
-
-# Función para guardar el certificado con nombre personalizado
 def ruta_certificado(instance, filename):
     ext = filename.split('.')[-1]
     filename_nuevo = f"{instance.uuid}.{ext}"
@@ -60,12 +58,6 @@ class Instrumento(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     magnitud = models.CharField(max_length=20, choices=MAGNITUD_CHOICES, default='temperatura')
     laboratorio = models.ForeignKey('Laboratorio', on_delete=models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.certificado:
-            print("Archivo certificado guardado en:", self.certificado.url)
-            print("Nombre archivo:", self.certificado.name)
 
     def __str__(self):
         return f"{self.nombre} - {self.tag}"
