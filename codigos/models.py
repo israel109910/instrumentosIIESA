@@ -37,8 +37,9 @@ class Laboratorio(models.Model):
 
 # Función para guardar el certificado con nombre personalizado
 def ruta_certificado(instance, filename):
-    return f'certificados/{filename}'
-
+    ext = filename.split('.')[-1]
+    filename_nuevo = f"{instance.uuid}.{ext}"
+    return f'certificados/{filename_nuevo}'
 
 class Instrumento(models.Model):
     MAGNITUD_CHOICES = [
