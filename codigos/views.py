@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.http import HttpResponse, FileResponse
+from django.contrib import messages  # ✅ Import necesario para usar messages
+from django.http import HttpResponse, FileResponse, HttpResponseForbidden
 from django.db.models import Q
-from .models import Instrumento, Laboratorio, Sitio, ParametrosGlobales, Estado, Seccion
+from .models import Instrumento, Laboratorio
 from .forms import InstrumentoForm, InstrumentoFormLab
 from io import BytesIO
 import qrcode
@@ -12,10 +12,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 import os
 from django.conf import settings
-import json
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-
 
 # ==========================
 # Validadores de roles
@@ -52,19 +48,17 @@ def user_passes_test_with_message(test_func, login_url=None, message="No tienes 
     return decorator
 
 # --------------------------
-# Vista principal instrumentos(inicio)
+# Vista principal (inicio)
 # --------------------------
-
 @login_required
 @user_passes_test_with_message(es_lab_o_admin)
 def inicio(request):
     return render(request, 'main.html')
 
 @login_required
-@user_passes_test_with_message(es_lab_o_admin)
+@user_passes_test_with_message(es_lab_o_admin)  
 def inicio_instrumentos(request):
-    return render(request, 'inicio.html')
-
+    return render(request, 'instrumentos/inicio_instrumentos.html')
 # --------------------------
 # Lista de instrumentos
 # --------------------------
@@ -103,7 +97,7 @@ def lista_instrumentos(request):
 # --------------------------
 # Crear nuevo instrumento
 # --------------------------
-from django import forms
+from django import forms  # ⚠️ Asegúrate de tener esto también
 
 @login_required
 @user_passes_test_with_message(es_lab_o_admin)
@@ -123,6 +117,7 @@ def crear_instrumento(request):
 
     return render(request, 'instrumentos/formulario.html', {'form': form})
 
+
 # --------------------------
 # Editar instrumento
 # --------------------------
@@ -136,27 +131,16 @@ def editar_instrumento(request, instrumento_id):
         return redirect('lista_instrumentos')
 
     if request.method == 'POST':
-        if request.user.rol == 'ADMIN':
-            form = InstrumentoForm(request.POST, request.FILES, instance=instrumento)
-        else:
-            form = InstrumentoFormLab(request.POST, request.FILES, instance=instrumento)
+        form = InstrumentoForm(request.POST, request.FILES, instance=instrumento)
         if form.is_valid():
             instrumento = form.save(commit=False)
             if request.user.rol == 'LAB':
                 instrumento.laboratorio = request.user.laboratorio
             instrumento.save()
-            # Guardar certificado explícitamente en S3 si se subió uno nuevo
-            if 'certificado' in request.FILES:
-                certificado_file = request.FILES['certificado']
-                file_path = instrumento.certificado.field.upload_to(instrumento, certificado_file.name)
-                default_storage.save(file_path, certificado_file)
             messages.success(request, "Instrumento actualizado correctamente.")
             return redirect('lista_instrumentos')
     else:
-        if request.user.rol == 'ADMIN':
-            form = InstrumentoForm(instance=instrumento)
-        else:
-            form = InstrumentoFormLab(instance=instrumento)
+        form = InstrumentoForm(instance=instrumento)
 
     return render(request, 'instrumentos/formulario.html', {'form': form})
 
@@ -168,7 +152,6 @@ def editar_instrumento(request, instrumento_id):
 def detalle_instrumento(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
     return render(request, 'instrumentos/detalle.html', {'instrumento': instrumento})
-
 
 # --------------------------
 # Validación por UUID (QR)
@@ -196,8 +179,6 @@ def generar_qr(request, instrumento_id):
 # --------------------------
 # Descargar QR como PDF
 # --------------------------
-@login_required
-@user_passes_test_with_message(es_lab_o_admin)
 def qr_pdf(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
     url = request.build_absolute_uri(f"/validar/{instrumento.uuid}/")
@@ -210,7 +191,7 @@ def qr_pdf(request, instrumento_id):
     qr_image = ImageReader(qr_io)
 
     # Ruta del logotipo local
-    logo_path = os.path.join(settings.BASE_DIR, 'imagenes', 'LOGO.png')
+    logo_path = os.path.join(settings.BASE_DIR, '', 'imagenes', 'LOGO.png')
     logo_image = ImageReader(logo_path)
 
     # Crear PDF
@@ -248,6 +229,7 @@ def qr_pdf(request, instrumento_id):
     buffer.seek(0)
 
     return FileResponse(buffer, as_attachment=True, filename=f"{instrumento.tag}_qr.pdf")
+
 
 def calcular_viaticos(request):
     estados = Estado.objects.all()

@@ -34,10 +34,19 @@ class Laboratorio(models.Model):
     def __str__(self):
         return self.nombre
 
+
+# Función para guardar el certificado con nombre personalizado
 def ruta_certificado(instance, filename):
-    ext = filename.split('.')[-1]
-    filename_nuevo = f"{instance.uuid}.{ext}"
-    return f'certificados/{filename_nuevo}'
+    nombre = slugify(instance.nombre)  # Ej: "termometro-uno"
+    folio = slugify(instance.folio or "sin-folio")  # Evita errores si folio es None
+
+    # Obtener extensión del archivo original
+    extension = os.path.splitext(filename)[1]  # por ejemplo: '.pdf'
+    nuevo_nombre = f"certificado_{folio}{extension}"  # certificado_f-001.pdf
+
+    carpeta = f"{nombre}-{folio}"  # certificados/termometro-uno-f-001/
+    return os.path.join('certificados', carpeta, nuevo_nombre)
+
 
 class Instrumento(models.Model):
     MAGNITUD_CHOICES = [
@@ -48,7 +57,7 @@ class Instrumento(models.Model):
     ]
 
     nombre = models.CharField(max_length=100)
-    tag = models.CharField(max_length=120)
+    tag = models.CharField(max_length=100)
     modelo = models.CharField(max_length=100)
     serie = models.CharField(max_length=100)
     folio = models.CharField(max_length=100, null=True, blank=True)
