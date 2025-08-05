@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages  # ✅ Import necesario para usar messages
+from django.contrib import messages  
 from django.http import HttpResponse, FileResponse, HttpResponseForbidden
 from django.db.models import Q
 from .models import Instrumento, Laboratorio
@@ -65,15 +65,18 @@ def inicio_instrumentos(request):
 @login_required
 @user_passes_test_with_message(es_lab_o_admin)
 def lista_instrumentos(request):
-    q = request.GET.get('q', '')
-    laboratorio_id = request.GET.get('laboratorio')
+    # Obtener los parámetros de búsqueda de la URL (query params)
+    q = request.GET.get('q', '')  # 'q' es el texto de búsqueda
+    laboratorio_id = request.GET.get('laboratorio', '')  # id del laboratorio para filtrar
+
+    # Traer todos los instrumentos inicialmente
     instrumentos = Instrumento.objects.all()
 
-    # FILTRO por rol: si es LAB, solo ve los instrumentos de su laboratorio
+    # Si el usuario es LAB, filtra solo instrumentos de su laboratorio
     if request.user.rol == 'LAB':
         instrumentos = instrumentos.filter(laboratorio=request.user.laboratorio)
 
-    # FILTRO por búsqueda (nombre, tag, folio, serie)
+    # Si el usuario busca con 'q', filtrar por nombre, tag, folio o serie que contengan 'q'
     if q:
         instrumentos = instrumentos.filter(
             Q(nombre__icontains=q) |
@@ -82,16 +85,21 @@ def lista_instrumentos(request):
             Q(serie__icontains=q)
         )
 
-    # FILTRO por laboratorio solo si es ADMIN
+    # Si hay filtro por laboratorio y el usuario no es LAB, filtrar por laboratorio
     if laboratorio_id and request.user.rol != 'LAB':
         instrumentos = instrumentos.filter(laboratorio_id=laboratorio_id)
 
+    # Obtener todos los laboratorios para mostrar en el select del filtro
     laboratorios = Laboratorio.objects.all()
 
+    # Enviar al contexto los resultados y los valores de búsqueda para mantener el formulario
     context = {
         'instrumentos': instrumentos,
         'laboratorios': laboratorios,
+        'q': q,
+        'laboratorio_seleccionado': laboratorio_id,
     }
+
     return render(request, 'instrumentos/lista.html', context)
 
 # --------------------------
