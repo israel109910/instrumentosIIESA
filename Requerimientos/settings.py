@@ -57,7 +57,9 @@ WSGI_APPLICATION = 'Requerimientos.wsgi.application'
 
 # Base de datos
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL')  # Aquí 'DATABASE_URL' es el nombre de la variable
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -74,23 +76,33 @@ USE_TZ = True
 
 # Archivos estáticos
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Archivos MEDIA en Google Cloud Storage
-DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME', 'certificados-iiesa')
 
-# Lee el JSON desde una variable de entorno
-GCP_CREDENTIALS_JSON = os.getenv('GCP_CREDENTIALS_JSON')
-if GCP_CREDENTIALS_JSON:
-    GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
-        json.loads(GCP_CREDENTIALS_JSON)
-    )
-else:
-    GS_CREDENTIALS = None  # Esto te permitirá detectar si no se configuró correctamente
+# Almacenamiento S3
+# settings.py — sección S3
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+AWS_ACCESS_KEY_ID        = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY    = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME  = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+
+AWS_S3_REGION_NAME       = 'us-east-2'
+
+# Fuerza Signature v4
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+# Usa path-style URLs en vez de virtual-hosted
+AWS_S3_ADDRESSING_STYLE  = 'path'
+
+# Apunta al endpoint regional de path-style
+AWS_S3_ENDPOINT_URL      = f'https://s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+
+AWS_QUERYSTRING_AUTH     = True
+AWS_S3_FILE_OVERWRITE    = True
+AWS_DEFAULT_ACL          = None
+
 
 # Redirecciones de login/logout
 LOGIN_REDIRECT_URL = '/'

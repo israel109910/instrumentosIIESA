@@ -1,0 +1,49 @@
+[33mabbc015[m[33m ([m[1;36mHEAD[m[33m)[m 21-07
+[33mfa0efef[m 21-07
+[33m51a8939[m version final 11-07
+[33mabe7bc3[m version final 11-07
+[33m8492641[m version final 11-07
+[33m700adbb[m cambio de base de datos 2
+[33me4cddea[m cambio de base de datos
+[33m23c74e2[m version final 04/07 2.1
+[33md760174[m version final 04/07 2
+[33m8b8c8f8[m version final 04/07
+[33m9857232[m version beta final 26/06/2025
+[33m984f6ca[m Add psycopg2-binary to requirements agrgar s3
+[33mf3f4d61[m version beta 25-06-2025 prueba base datos guicorn actualizado
+[33m9df0d8b[m version beta 25-06-2025 prueba base datos 2
+[33m76ee12d[m version beta 25-06-2025 prueba database
+[33m5ff8614[m version beta 25-06-2025
+[33m410d9b6[m Add psycopg2-binary to requirements
+[33me452f02[m version beta 1
+[33m2146c63[m version gitignore
+[33mda25c30[m se agrega boton de ver certificado nuevo 2
+[33mbe4bb42[m se agrega boton de ver certificado nuevo 1
+[33m2644dc2[m se agrega boton de ver certificado nuevo
+[33m8ea5070[m Actualización visualizador de pdf en pagina de validación 24/06/2025
+[33m61a22f8[m se agrega boton de ver certificado 2
+[33mff807dd[m se agrega boton de ver certificado
+[33mc847f14[m Actualización visualizador de pdf en pagina de validación 5
+[33m3dd21e5[m Actualización visualizador de pdf en pagina de validación 5
+[33m30ab9e4[m Actualización visualizador de pdf en pagina de validación 5
+[33m414f051[m Actualización visualizador de pdf en pagina de validación 3
+[33m589a378[m revision se agrego el folio 2
+[33m757350e[m Actualización visualizador de pdf en pagina de validación
+[33mc658302[m prueba amazon webservices
+[33m1f86ecd[m revision se agrego el folio
+[33m2188275[m ✔️ Configuración final para Railway prueba final 2
+[33m951a547[m ✔️ Configuración final para Railway prueba final
+[33m92b82ae[m ✔️ Configuración final para Railway 3
+[33m0cb39ae[m ✔️ Configuración final para Railway 3
+[33m7fb9b9f[m Corrige conflicto en la vista raíz para Railway
+[33m1ec7966[m version 2 19/06/2025
+[33m6d450db[m version 19/06/2025
+[33m4e89525[m Version railway 19-06-2025 2
+[33m0620074[m Version railway 19-06-2025
+[33mcc1f514[m 18/06/2025 ()
+[33m1574e6f[m 18/06/2025 (9)
+[33m013fe3d[m Configura WhiteNoise y ajusta settings.py
+[33m1172b2e[m 18/06/2025 (6)
+[33m2e4a22d[m 18/06/2025 (4)
+[33m58f1d8a[m Commit 18/06/2025
+[33m53100a1[m Primer commit del proyecto Django
