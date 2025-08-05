@@ -1,17 +1,18 @@
-import os
-import json
 from pathlib import Path
+import os
 import dj_database_url
-from google.oauth2 import service_account
 
+# Directorio base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'tu-secret-key-por-defecto-en-desarrollo')
-
+# Seguridad
+SECRET_KEY = '+bh4@(y1sbv2c#+1p179=$fgj-oht55g0k3o!0c0wo#hz#y%&q'
 DEBUG = True
+ # Cambia a False en producción
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = ['*', 'instrumentosiiesa-production.up.railway.app', 'localhost']
 
+# Aplicaciones instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -19,13 +20,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storages',
+    'storages',  # Para django-storages y S3
     'codigos',
 ]
 
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Sirve archivos estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -36,12 +38,14 @@ MIDDLEWARE = [
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
+# URL raíz de la app
 ROOT_URLCONF = 'Requerimientos.urls'
 
+# Plantillas
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -62,6 +66,14 @@ DATABASES = {
     )
 }
 
+#{
+ #   'default': {
+  #      'ENGINE': 'django.db.backends.sqlite3',
+    #    'NAME': BASE_DIR / 'db.sqlite3',
+   # }
+#}
+
+# Validadores de contraseña
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -69,6 +81,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# Idioma y zona horaria
 LANGUAGE_CODE = 'es'
 TIME_ZONE = 'America/Mexico_City'
 USE_I18N = True
@@ -79,6 +92,18 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Archivos multimedia
+# Aunque en S3 no usas MEDIA_ROOT ni MEDIA_URL localmente, puedes dejarlo así para pruebas locales
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Redirecciones
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'
+
+# Usuario personalizado
+AUTH_USER_MODEL = 'codigos.User'
 
 # Almacenamiento S3
 # settings.py — sección S3
@@ -104,15 +129,11 @@ AWS_S3_FILE_OVERWRITE    = True
 AWS_DEFAULT_ACL          = None
 
 
-# Redirecciones de login/logout
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-LOGIN_URL = '/accounts/login/'
+# CSRF para Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://instrumentos-iiesa.up.railway.app',
+    'http://localhost:8000'
+]
 
-# Usuario personalizado
-AUTH_USER_MODEL = 'codigos.User'
-
-# CSRF confiables
-CSRF_TRUSTED_ORIGINS = ['https://instrumentos-iiesa.up.railway.app', 'http://localhost:8000']
-
+# Campo por defecto para modelos nuevos
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

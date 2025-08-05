@@ -58,7 +58,7 @@ def inicio(request):
 @login_required
 @user_passes_test_with_message(es_lab_o_admin)  
 def inicio_instrumentos(request):
-    return render(request, 'instrumentos/inicio_instrumentos.html')
+    return render(request, 'inicio.html')
 # --------------------------
 # Lista de instrumentos
 # --------------------------
