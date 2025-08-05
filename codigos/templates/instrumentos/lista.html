@@ -7,14 +7,14 @@
 
     <form method="get" class="row g-3 mb-4">
         <div class="col-md-4">
-            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Buscar por nombre, tag, folio o número de serie...">
+            <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control" placeholder="Buscar por nombre, tag, folio o número de serie...">
         </div>
         {% if request.user.rol != 'LAB' %}
         <div class="col-md-3">
             <select name="laboratorio" class="form-select">
                 <option value="">Todos los laboratorios</option>
                 {% for lab in laboratorios %}
-                    <option value="{{ lab.id }}" {% if request.GET.laboratorio == lab.id|stringformat:"d" %}selected{% endif %}>
+                    <option value="{{ lab.id }}" {% if request.GET.laboratorio|default:'' == lab.id|stringformat:"d" %}selected{% endif %}>
                         {{ lab.nombre }}
                     </option>
                 {% endfor %}

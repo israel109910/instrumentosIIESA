@@ -131,7 +131,7 @@ def editar_instrumento(request, instrumento_id):
         return redirect('lista_instrumentos')
 
     if request.method == 'POST':
-        form = InstrumentoForm(request.POST, request.FILES, instance=instrumento)
+        form = InstrumentoForm(request.POST, request.FILES, instance=instrumento)  # OJO: request.FILES aquí es vital
         if form.is_valid():
             instrumento = form.save(commit=False)
             if request.user.rol == 'LAB':
@@ -143,7 +143,6 @@ def editar_instrumento(request, instrumento_id):
         form = InstrumentoForm(instance=instrumento)
 
     return render(request, 'instrumentos/formulario.html', {'form': form})
-
 # --------------------------
 # Detalle de instrumento
 # --------------------------
